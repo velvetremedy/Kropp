@@ -5,18 +5,30 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Kropp</title>
-    <link rel="stylesheet" href="./styles.css">
+    <title>Kropp Fitness</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="normalize.css">
 </head>
 <body>
     <header class="header">
         <a class="header-logo" href="/">
-            <img class="header-logo-image" src="images/logo.png" alt="Kropp Logo" width="135" height="25" loading="lazy">
+            <!--
+              Атрибут loading="lazy" нужен, чтобы отложенно загружать изображения и iframe — то есть подгружать их только тогда,
+              когда они реально появляются в зоне видимости пользователя, а не сразу при загрузке страницы.
+             -->
+            <img
+                class="header-logo-image"
+                src="./images/logo.png"
+                alt="Kropp Logo"
+                width="135"
+                height="25"
+                loading="lazy"
+            >
         </a>
         <nav class="header-menu">
             <ul class="header-menu-list">
                 <li class="header-menu-item">
-                    <a class="header-menu-link is-current" href="/">Home</a>
+                    <a class="header-menu-link  is-current" href="/">Home</a>
                 </li>
                 <li class="header-menu-item">
                     <a class="header-menu-link" href="/">Pages</a>
@@ -33,10 +45,14 @@
             </ul>
         </nav>
         <div class="header-actions">
-            <button class="header-book-button button" type="button">
-                Book now
-            </button>
-            <button class="header-burger-button" type="button">
+            <!--
+             Кнопка или ссылка выбирается от действия, которое происходит при нажатии на элемент.
+             Если действие происходит в рамках текущей страницы - то делаем тегом button.
+             Если это ссылка которая ведет на другою страницу - нужно делать тегом a.
+            -->
+            <button class="header-book-button button" type="button">Book now</button>
+            <button class="header-burger-button" title="Open menu">
+                <span class="visually-hidden">Open menu</span>
                 <span class="header-burger-button-line"></span>
                 <span class="header-burger-button-line"></span>
                 <span class="header-burger-button-line"></span>
