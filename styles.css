@@ -49,6 +49,8 @@
     --container-padding-x: 15px;
 
     --transition-duration: 0.2s;
+
+    --header-height: 90px;
 }
 
 body {
@@ -77,6 +79,16 @@ a {
 
 a:hover {
     color: var(--color-light-gray);
+}
+
+p {
+    margin-block: 0;
+}
+
+/* Выбирает все теги параграфа которые не являются последними среди своих соседних лежащих на одном уровне элементов */
+/* А так же не имеют класса */
+p:not([class]):not(:last-child) {
+    margin-bottom: 24px;
 }
 
 .visually-hidden {
@@ -108,11 +120,51 @@ h1, h2, h3, h4, h5, h6 {
     text-transform: uppercase;
 }
 
+.title-medium {
+    font-size: clamp(20px, 2.08vw, 40px);
+    line-height: 1.3;
+    color: var(--color-light);
+}
+
+.backdrop-title {
+    position: relative;
+    z-index: 2;
+}
+
+.backdrop-title::before {
+    content: '';
+    display: block;
+    position: absolute;
+    /* Отступи от правого края родителя на величину равную ширине самого элемента (100%) плюс ещё 8px. */
+    right: calc(100% + 8px);
+    width: 26px;
+    aspect-ratio: 1;
+    background: url("./icons/plus.svg") center/contain no-repeat;
+}
+
+.backdrop-title::after {
+    /* Получаем значение из разметки в указанном дата атрибуте */
+    content: attr(data-title);
+    position: absolute;
+    z-index: -1;
+    top: -0.45em;
+    left: -0.6em;
+    font-family: var(--font-family-accent), 'sans-serif';
+    color: transparent;
+    /* Добавляем обводку тексту. Обязателен вендорный преффикс webkit */
+    -webkit-text-stroke: 1px var(--color-light-gray);
+    text-stroke: 1px var(--color-light-gray);
+    /* У основного текста размер 40 пикселей. Воспользуемся единицами em для того чтобы размер фонового теста
+    считался относительно размера текста родителя. 112 (текст по макету) / 40 (размер родителя) = 2.8 */
+    font-size: 2.8em;
+}
+
 .button {
     display: inline-flex;
     align-items: center;
     padding-inline: 26px;
     height: 38px;
+    text-decoration: none;
     font-size: 12px;
     font-weight: 700;
     line-height: 2;
@@ -129,11 +181,38 @@ h1, h2, h3, h4, h5, h6 {
     transition-duration: var(--transition-duration);
 }
 
+.button.transparent {
+    position: relative;
+    height: var(--input-height);
+    padding-left: 31px;
+    padding-right: 80px;
+    background-color: transparent;
+    border: var(--border);
+}
+
+.button.transparent::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    height: 100%;
+    aspect-ratio: 1;
+    background: url("./icons/arrow-top-right.svg") center/70% no-repeat;
+    border: var(--border);
+    border-radius: 50%;
+}
+
+.button.transparent:hover {
+    color: var(--color-dark);
+    background-color: var(--color-light-gray);
+    transition-duration: var(--transition-duration);
+}
+
 /* Хедер */
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    min-height: var(--header-height);
     padding-inline: 32px;
     /* Для того чтобы элементы не слипались при сжатии экрана */
     column-gap: 20px;
@@ -155,7 +234,7 @@ h1, h2, h3, h4, h5, h6 {
     display: inline-flex;
     align-items: center;
     column-gap: 7px;
-    height: 90px;
+    height: var(--header-height);
 
     text-decoration: none;
     text-transform: uppercase;
@@ -164,7 +243,7 @@ h1, h2, h3, h4, h5, h6 {
     letter-spacing: 1.2px;
 }
 
-/* header-menu-link содержащий is-currnet */
+/* header-menu-link содержащий is-current */
 .header-menu-link.is-current::after {
     content: "";
     width: 5px;
@@ -208,13 +287,160 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 
+/* Слайдер */
+.banner {
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    /* 100% высоты минус высота шапки */
+    min-height: calc(100vh - var(--header-height));
+    padding: 36px 70px;
+    color: var(--color-light);
+    background-color: var(--color-dark-alternate);
+}
+
+.banner-body {
+    text-transform: uppercase;
+}
+
+.banner-info {
+    /*
+        Если не задать флекс, то псевдоэлемент не будет отображаться.
+        Потому что потреяет свойство width.
+        Псеводоэлемент по умолчанию является строчным.
+    */
+    display: flex;
+    align-items: end;
+    /* 3 значения: минимальное, рекомендуемое, максимальное */
+    font-size: clamp(16px, 1.56vw, 30px);
+    line-height: 1.27;
+    font-weight: 700;
+}
+
+.banner-info::before {
+    content: '';
+    width: clamp(60px, 10.1vw, 194px);
+    aspect-ratio: 1;
+    margin-right: 30px;
+    background: url('./icons/bold-arrow-down-right.svg') center/contain no-repeat;
+}
+
+.banner-title {
+    /* font-size: 360px; */
+    /* Меняем пиксели на вьюпорт единицы. */
+    /* 360 / 1920 (ширина макета) * 100 = 18.75 */
+    /* Чтобы на больших экранах текст не был больше 360 пикселей используем min. Браузер среди них будет выбирать наименьшее. */
+    font-size: min(18.75vw, 360px);
+    line-height: 1;
+}
+
+.banner-pagination-list {
+    display: flex;
+    justify-content: center;
+}
+
+.banner-pagination-item {
+    /* По умолчанию браузер задает им высоту line height, и display: list-item*/
+    /* Чтобы высота элементов соответствовала высоте содержимого поменяем display на flex */
+    display: flex;
+}
+
+.banner-pagination-button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 7px;
+    background-color: transparent;
+    border: none;
+}
+
+/* Увеличим область нажатия на кнопки пагинации, для этого отрисуем кружок через афтер */
+.banner-pagination-button::after {
+    content: '';
+    width: 10px;
+    aspect-ratio: 1;
+    border: var(--border);
+    border-radius: 50%;
+}
+
+.banner-pagination-button.is-current::after {
+    background-color: var(--color-light);
+}
+
+/*
+    Обращаемся ко всем кнопкам у которых нет класса is-current т.к. эффект наведения должен отрабатывать только на
+    неактивных кнопках. Затем указываем ховер и в конце обращаемся к нашему псевдоэлементу кружку.
+*/
+.banner-pagination-button:not(.is-current):hover::after {
+    border-color: var(--color-light-gray);
+    transition-duration: var(--transition-duration);
+}
+
+
+/* Мотивация */
+/* Только четные элементы будут иметь фон другого цвета */
+.motivation-item:nth-child(even) {
+    background-color: var(--color-dark-alternate);
+}
+
+/* Обратимся к motivation-card лежащим в четных элементах motivation-item */
+.motivation-item:nth-child(even) .motivation-card {
+    flex-direction: row-reverse;
+}
+
+.motivation-card {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    column-gap: clamp(30px, 10.42vw, 200px);
+}
+
+.motivation-card-image {
+    /* margin-block: -60px; означает, что элемент получает отрицательный внешний отступ как в начале,
+     так и в конце блока (по логическому направлению письма). */
+    margin-block: -60px;
+}
+
+.motivation-card-body {
+    padding-left: 35px;
+}
+
+/* Свойство применяется к тем элементам которые не являются последними */
+.motivation-card-title:not(:last-child) {
+    margin-bottom: 14px;
+}
+
+.motivation-card-description {
+    max-width: 400px;
+}
+
+.motivation-card-description:not(:last-child) {
+    margin-bottom: 37px;
+}
+
+
+
+
+
+
+
 /* Адаптив */
+@media (max-width: 1919px) {
+    .motivation-card-image {
+        margin-block: -20px;
+    }
+}
+
 @media (max-width: 1024px) {
     .header {
         /* Чтобы во флекс контейнере внутренние элементы могли пребрасываться на новые строки */
         flex-wrap: wrap;
         padding-top: 20px;
         row-gap: 10px;
+    }
+
+    .header,
+    .banner {
         padding-inline: 15px;
     }
 
@@ -233,6 +459,20 @@ h1, h2, h3, h4, h5, h6 {
    .header-menu-link {
        height: 50px;
    }
+
+    .banner {
+        row-gap: 10px;
+    }
+
+    .motivation-card {
+        padding-block: 50px;
+    }
+
+    .motivation-card-image {
+        max-width: 30%;
+        height: auto;
+        margin-block: 0;
+    }
 }
 
 @media (max-width: 767px) {
@@ -255,10 +495,44 @@ h1, h2, h3, h4, h5, h6 {
     .header-actions {
         column-gap: 15px;
     }
+
+    .banner-info {
+        margin-bottom: 5px;
+    }
+
+    .banner-info::before {
+        margin-right: 10px;
+    }
+
+    .motivation-card,
+    .motivation-item:nth-child(even) .motivation-card {
+        flex-direction: column-reverse;
+    }
+
+    .motivation-card {
+        padding-block: 30px;
+        row-gap: 30px;
+    }
+
+    .motivation-card-image {
+        max-width: 60%;
+        height: auto;
+    }
+
+    .motivation-card-description:not(:last-child) {
+        margin-bottom: 20px;
+    }
 }
 
-
-
+/*
+    1. Почитать про before after.
+    2. Почитать про свойство background.
+    3. Почитать про блочные и инлайн элементы.
+    4. Повторить флексы.
+    5. Сложные css селекторы.
+    6. Динамические единицы измерения
+    7. margin block с отрицательным значением, как я выравнивал картинки
+*/
 
 
 
